@@ -4,23 +4,54 @@ import './RichTextEditor.css';
 const RichTextEditor = () => {
   const editorRef = useRef(null);
 
-  const format = (command, value = null) => {
-    document.execCommand(command, false, value);
-  };
-
   const handlePaste = (e) => {
     e.preventDefault();
     const text = e.clipboardData.getData('text/plain');
     document.execCommand("insertText", false, text);
   };
 
+
+  const makeBold = () => {
+    const selection = window.getSelection();
+    if (!selection.rangeCount) return;
+  
+    const range = selection.getRangeAt(0);
+    const strong = document.createElement("strong");
+    strong.appendChild(range.extractContents());
+    range.insertNode(strong);
+  
+    // Optional: Move cursor after inserted element
+    range.setStartAfter(strong);
+    selection.removeAllRanges();
+    selection.addRange(range);
+  };
+  
+  const makeItalic = () => {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return;
+  
+    const range = selection.getRangeAt(0);
+  
+    // Create <em> element
+    const em = document.createElement("em");
+    em.appendChild(range.extractContents());
+    range.insertNode(em);
+  
+    // Move the caret after the inserted element
+    range.setStartAfter(em);
+    range.setEndAfter(em);
+    selection.removeAllRanges();
+    selection.addRange(range);
+  };
+  
+
   return (
     <div className="editor-container">
       {/* Toolbar */}
       <div className="toolbar">
-        <button onClick={() => format('bold')}><b>B</b></button>
-        <button onClick={() => format('italic')}><i>I</i></button>
-        <button onClick={() => format('underline')}><u>U</u></button>
+        <button onClick={makeBold}><b>B</b></button> 
+        <button onClick={makeItalic}><i>I</i></button>
+        {/* <button onClick={() => format('underline')}><u>U</u></button>
         <button onClick={() => format('formatBlock', '<h1>')}>H1</button>
         <button onClick={() => format('formatBlock', '<blockquote>')}>Quote</button>
         <button onClick={() => format('insertUnorderedList')}>• List</button>
@@ -28,8 +59,7 @@ const RichTextEditor = () => {
         <button onClick={() => {
           const url = prompt("Enter URL");
           if (url) format('createLink', url);
-        }}>Link</button>
-        <button onClick={() => format('removeFormat')}>Clear</button>
+        }}>Link</button> */}
       </div>
 
       {/* Editable Div */}
