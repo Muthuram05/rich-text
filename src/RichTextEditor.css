@@ -25,4 +25,11 @@
     min-height: 300px;
     outline: none;
   }
+
+  .editor img {
+    max-width: 100%;
+    height: auto;
+    margin: 5px 0;
+  }
+  
   
